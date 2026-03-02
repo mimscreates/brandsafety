@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brand Safety - Creator Search</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              50: '#f1f3ff',
+              500: '#0d0de6',
+            },
+            gray: {
+              50: '#f9fafb',
+              100: '#f3f4f6',
+              200: '#e5e7eb',
+              300: '#d1d5db',
+              400: '#9ca3af',
+              500: '#6b7280',
+              600: '#4b5563',
+              700: '#374151',
+              800: '#1f2937',
+              900: '#1b1e21',
+            },
+            success: {
+              50: '#ecfdf5',
+              500: '#10b981',
+            },
+            warning: {
+              50: '#fffbeb',
+              500: '#f59e0b',
+            },
+            danger: {
+              50: '#fef2f2',
+              500: '#ef4444',
+            },
+            blue: {
+              100: '#dbeafe',
+              600: '#2563eb',
+            },
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    /* Risk button hover: swap plain (filled) → empty (outline) */
+    .risk-btn .risk-hover { display: none; }
+    .risk-btn .risk-default { display: block; }
+    .risk-btn:hover .risk-hover, .risk-btn.is-hovered .risk-hover { display: block; }
+    .risk-btn:hover .risk-default, .risk-btn.is-hovered .risk-default { display: none; }
+    .risk-btn { cursor: pointer; transition: transform 0.15s ease; }
+    .risk-btn:hover, .risk-btn.is-hovered { transform: scale(1.1); }
+  </style>
+</head>
+<body class="bg-white h-screen overflow-hidden">
+  <div class="flex h-full">
+
+    <!-- Sidebar -->
+    <aside class="w-12 bg-white border-r border-gray-200 flex flex-col items-center shrink-0 rounded-tl-lg rounded-bl-lg">
+      <!-- Logo -->
+      <div class="w-full h-[54px] flex items-center justify-center border-b border-gray-200">
+        <div class="w-[30px] h-[30px] flex items-center justify-center">
+          <img src="Assets/platform-logo.png" alt="Platform" class="w-full h-full object-contain" />
+        </div>
+      </div>
+
+      <!-- Main Nav -->
+      <div class="flex-1 flex flex-col items-center gap-[6px] px-[9px] py-3">
+        <div class="flex flex-col items-center gap-[9px] flex-1">
+          <button class="w-[30px] h-[30px] rounded-lg bg-white flex items-center justify-center hover:bg-gray-50">
+            <i class="fa-solid fa-people-group text-xs text-gray-900"></i>
+          </button>
+          <button class="w-[30px] h-[30px] rounded-lg flex items-center justify-center hover:bg-gray-50">
+            <i class="fa-solid fa-briefcase text-xs text-gray-900"></i>
+          </button>
+          <button class="w-[30px] h-[30px] rounded-lg flex items-center justify-center hover:bg-gray-50">
+            <i class="fa-solid fa-chart-simple text-xs text-gray-900"></i>
+          </button>
+          <button class="w-[30px] h-[30px] rounded-lg flex items-center justify-center hover:bg-gray-50">
+            <i class="fa-solid fa-list text-xs text-gray-900"></i>
+          </button>
+        </div>
+        <button class="w-[30px] h-[30px] rounded-lg flex items-center justify-center hover:bg-gray-50">
+          <i class="fa-solid fa-gear text-xs text-gray-900"></i>
+        </button>
+      </div>
+
+      <!-- Bottom Nav -->
+      <div class="flex flex-col items-center gap-[6px] px-[9px] py-3 border-t border-gray-200 w-full">
+        <!-- Community size -->
+        <div class="w-[30px] bg-white rounded-lg flex flex-col items-center gap-[3px] p-[6px]">
+          <i class="fa-solid fa-users text-[6px] text-gray-900"></i>
+          <span class="text-[10px] font-semibold text-gray-600 leading-[1.6]">25</span>
+          <div class="w-full h-[2px] bg-gray-200 rounded-full overflow-hidden">
+            <div class="h-full w-[60%] bg-emerald-500 rounded-full"></div>
+          </div>
+        </div>
+        <button class="w-[30px] h-[30px] rounded-lg flex items-center justify-center hover:bg-gray-50">
+          <i class="fa-regular fa-bell text-xs text-gray-900"></i>
+        </button>
+        <button class="w-[30px] h-[30px] rounded-lg flex items-center justify-center hover:bg-gray-50">
+          <i class="fa-regular fa-circle-question text-xs text-gray-900"></i>
+        </button>
+        <!-- Avatar -->
+        <div class="w-6 h-6 rounded-full overflow-hidden border border-white">
+          <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=48&h=48&fit=crop&crop=face" alt="User" class="w-full h-full object-cover" />
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-w-0">
+
+      <!-- Top Bar -->
+      <div class="h-[54px] bg-white border-b border-gray-200 flex items-center px-6 shrink-0 relative">
+        <div class="flex items-center gap-[30px] flex-1 h-full">
+          <!-- List name dropdown -->
+          <button class="flex items-center gap-3 shrink-0">
+            <span class="text-base font-semibold text-gray-600 leading-[1.6] max-w-[200px] truncate">List name</span>
+            <i class="fa-solid fa-chevron-down text-xs text-gray-900"></i>
+          </button>
+
+          <!-- Tabs -->
+          <div class="flex-1 h-full flex items-end min-w-0 relative">
+            <div class="flex items-start h-[43px] overflow-x-auto scrollbar-hide">
+              <!-- Active tab: Find creators -->
+              <div class="flex flex-col items-center justify-center h-full pb-[9px] border-b-2 border-primary-500 rounded-t shrink-0">
+                <div class="flex items-center gap-[9px] px-[18px] py-[6px] h-[34px]">
+                  <i class="fa-solid fa-magnifying-glass text-xs text-primary-500"></i>
+                  <span class="text-sm text-primary-500 leading-[1.6]">Find creators</span>
+                </div>
+              </div>
+              <!-- Selected tab -->
+              <div class="flex flex-col items-center justify-center h-full pb-[9px] border-b border-gray-200 rounded-t shrink-0">
+                <div class="flex items-center gap-[9px] px-[18px] py-[6px] h-[34px]">
+                  <i class="fa-regular fa-heart text-xs text-gray-900"></i>
+                  <span class="text-sm text-gray-500 leading-[1.6]">Selected</span>
+                  <span class="bg-primary-500 text-white text-xs font-semibold rounded-full px-[9px] h-6 flex items-center justify-center leading-[1.6]">0</span>
+                </div>
+              </div>
+              <!-- Rejected tab -->
+              <div class="flex flex-col items-center justify-center h-full pb-[9px] border-b border-gray-200 rounded-t shrink-0">
+                <div class="flex items-center gap-[9px] px-[18px] py-[6px] h-[34px]">
+                  <i class="fa-regular fa-thumbs-down text-xs text-gray-900"></i>
+                  <span class="text-sm text-gray-500 leading-[1.6]">Rejected</span>
+                  <span class="bg-gray-100 text-gray-900 text-xs font-semibold rounded-full px-[9px] h-6 flex items-center justify-center leading-[1.6]">0</span>
+                </div>
+              </div>
+              <!-- Lookalikes tab -->
+              <div class="flex flex-col items-center justify-center h-full pb-[9px] border-b border-gray-200 rounded-t shrink-0">
+                <div class="flex items-center gap-[9px] px-[18px] py-[6px] h-[34px]">
+                  <i class="fa-solid fa-sparkles text-xs text-purple-500"></i>
+                  <span class="text-sm text-gray-500 leading-[1.6]">Lookalikes</span>
+                  <span class="bg-gray-100 text-gray-900 text-xs font-semibold rounded-full px-[9px] h-6 flex items-center justify-center leading-[1.6]">0</span>
+                </div>
+              </div>
+            </div>
+            <!-- Gradient fade -->
+            <div class="absolute right-0 top-0 bottom-[1px] w-[18px] bg-gradient-to-r from-transparent to-white pointer-events-none"></div>
+          </div>
+        </div>
+
+        <!-- Learn button -->
+        <div class="shrink-0 ml-3">
+          <button class="h-9 px-[18px] py-[3px] bg-white border border-gray-200 rounded-lg flex items-center gap-[6px]">
+            <i class="fa-regular fa-graduation-cap text-xs text-gray-900"></i>
+            <span class="text-xs text-gray-600 leading-[1.6]">Learn</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Bar Area -->
+      <div class="bg-gray-50 border-b border-gray-200 px-6 py-[18px] flex flex-col gap-3 shrink-0">
+        <!-- Search inputs row -->
+        <div class="flex items-center gap-3">
+          <!-- Result count badge -->
+          <div class="w-[54px] h-[54px] bg-primary-500 rounded-lg flex flex-col items-center justify-center shrink-0">
+            <span class="text-xs font-semibold text-white text-center leading-[1.6]">12M</span>
+          </div>
+
+          <!-- AI Search input -->
+          <div class="flex-1 h-[54px] bg-white border border-gray-200 rounded-xl flex items-center px-[18px] py-[6px] min-w-0">
+            <div class="flex items-center flex-1 justify-between">
+              <div class="flex items-center gap-[9px] pr-[18px]">
+                <!-- Jaice blob -->
+                <div class="w-[30px] h-[30px] relative shrink-0">
+                  <img src="Assets/Jaice Blob/Idle_128x128.gif" alt="Jaice" class="w-full h-full object-contain" />
+                </div>
+                <span class="text-sm text-gray-400 leading-[1.6] truncate">Ask me anything to refine your search</span>
+              </div>
+              <button class="w-6 h-6 border border-gray-200 rounded flex items-center justify-center shrink-0">
+                <i class="fa-regular fa-bookmark text-xs text-gray-900"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Platform filter -->
+          <div class="w-[250px] h-[54px] bg-white border border-gray-200 rounded-lg flex items-center px-[18px] py-[6px] shrink-0">
+            <div class="flex items-center flex-1 gap-3">
+              <span class="text-sm text-gray-400 leading-[1.6] truncate flex-1">Filter platforms</span>
+              <i class="fa-solid fa-chevron-down text-base text-gray-900"></i>
+            </div>
+          </div>
+
+          <!-- More filters -->
+          <div class="more-filters-wrapper shrink-0">
+            <button id="more-filters-btn" class="w-[250px] h-[54px] bg-white border border-gray-200 rounded-xl flex items-center px-[18px] py-[6px]">
+              <div class="flex items-center flex-1 gap-3">
+                <span class="text-sm text-gray-400 leading-[1.6] truncate flex-1 text-left">More filters</span>
+                <i class="fa-solid fa-chevron-down text-base text-gray-900"></i>
+              </div>
+            </button>
+
+            <!-- Backdrop -->
+            <div id="filters-backdrop" class="filters-backdrop"></div>
+
+            <!-- Dropdown panel -->
+            <div id="filters-dropdown" class="filters-dropdown">
+              <!-- Sticky header: title + nav -->
+              <div class="filters-sticky-header">
+                <div class="filters-panel-title">Filter panel</div>
+                <nav class="filters-anchor-nav" aria-label="Filter sections">
+                <a href="#filter-section-creator-infos" class="filters-anchor active" data-anchor="creator-infos">Creator infos</a>
+                <a href="#filter-section-audience" class="filters-anchor" data-anchor="audience">Audience infos</a>
+                <a href="#filter-section-brand-safety" class="filters-anchor" data-anchor="brand-safety">Brand safety</a>
+                <a href="#filter-section-lists" class="filters-anchor" data-anchor="lists">My saved lists</a>
+                </nav>
+              </div>
+
+              <!-- Scrollable body -->
+              <div class="filters-body" id="filters-body-scroll">
+
+                <!-- ═══ Section: Creator infos ═══ -->
+                <div class="filters-section" id="filter-section-creator-infos">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:9px;">
+                    <span class="filters-section-title">Creator infos</span>
+                  </div>
+
+                  <!-- Show only creators with emails -->
+                  <div class="filter-row">
+                    <div class="filter-row-label">
+                      <i class="fa-solid fa-at"></i>
+                      <span>Show only creators with emails</span>
+                    </div>
+                    <div class="filter-row-input" style="width:340px;">
+                      <button class="fi-switch">
+                        <div class="fi-switch-dot"></div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Include brand accounts -->
+                  <div class="filter-row">
+                    <div class="filter-row-label">
+                      <i class="fa-solid fa-building"></i>
+                      <span>Include brand accounts</span>
+                    </div>
+                    <div class="filter-row-input" style="width:340px;">
+                      <button class="fi-switch">
+                        <div class="fi-switch-dot"></div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Show only affiliate creators -->
+                  <div class="filter-row">
+                    <div class="filter-row-label">
+                      <i class="fa-solid fa-handshake"></i>
+                      <span>Show only affiliate creators</span>
+                      <i class="fa-solid fa-circle-info info-icon"></i>
+                    </div>
+                    <div class="filter-row-input" style="width:340px;">
+                      <button class="fi-switch">
+                        <div class="fi-switch-dot"></div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Creator was added -->
+                  <div class="filter-row">
+                    <div class="filter-row-label">
+                      <i class="fa-solid fa-user-plus"></i>
+                      <span>Creator was added</span>
+                      <i class="fa-solid fa-circle-info info-icon"></i>
+                    </div>
+                    <div class="filter-row-input">
+                      <div class="fi-toggle-group">
+                        <button class="fi-toggle-btn active">Anytime</button>
+                        <button class="fi-toggle-btn">Week</button>
+                        <button class="fi-toggle-btn">Month</button>
+                        <button class="fi-toggle-btn">3 months</button>
+                        <button class="fi-toggle-btn">Year</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Creator country -->
+                  <div class="filter-row">
+                    <div class="filter-row-label">
+                      <i class="fa-solid fa-globe-americas"></i>
+                      <span>Creator country</span>
+                    </div>
+                    <div class="filter-row-input">
+                      <div style="display:flex;align-items:center;gap:9px;">
+                        <button class="lists-header-link" style="margin-right:0;">Select all</button>
+                        <div class="fi-select w-250">
+                          <span class="fi-placeholder">Select country</span>
+                          <i class="fa-solid fa-chevron-down fi-chevron"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Creator geolocation -->
+                  <div class="filter-row">
+                    <div class="filter-row-label">
+                      <i class="fa-solid fa-location-dot"></i>
+                      <span>Creator geolocation</span>
+                    </div>
+                    <div class="filter-row-input">
+                      <div style="display:flex;gap:9px;align-items:center;width:300px;justify-content:flex-end;">
+                        <div class="fi-text-input">
+                          <span class="fi-placeholder">i.e. New York</span>
+                        </div>
+                        <div class="fi-label-input">
+                          <span class="fi-label-field">Radius</span>
+                          <span class="fi-label-suffix">Km</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Creator language -->
+                  <div class="filter-row">
+                    <div class="filter-row-label">
+                      <i class="fa-solid fa-language"></i>
+                      <span>Creator language</span>
+                    </div>
+                    <div class="filter-row-input">
+                      <div style="display:flex;align-items:center;gap:9px;">
+                        <button class="lists-header-link" style="margin-right:0;">Select all</button>
+                        <div class="fi-select w-250">
+                          <span class="fi-placeholder">Select language</span>
+                          <i class="fa-solid fa-chevron-down fi-chevron"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Creator gender -->
+                  <div class="filter-row">
+                    <div class="filter-row-label">
+                      <i class="fa-solid fa-venus-mars"></i>
+                      <span>Creator gender</span>
+                    </div>
+                    <div class="filter-row-input">
+                      <div class="fi-toggle-group">
+                        <button class="fi-toggle-btn active">All</button>
+                        <button class="fi-toggle-btn"><i class="fa-solid fa-venus" style="margin-right:4px;font-size:10px;"></i> Female</button>
+                        <button class="fi-toggle-btn"><i class="fa-solid fa-mars" style="margin-right:4px;font-size:10px;"></i> Male</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Creator age -->
+                  <div class="filter-row" style="border-top:1px solid #f3f4f6;border-bottom:none;">
+                    <div class="filter-row-label">
+                      <i class="fa-solid fa-cake-candles"></i>
+                      <span>Creator age</span>
+                    </div>
+                    <div class="filter-row-input">
+                      <div class="fi-pill-group">
+                        <button class="fi-pill">0 - 17</button>
+                        <button class="fi-pill">18 - 24</button>
+                        <button class="fi-pill">25 - 34</button>
+                        <button class="fi-pill">35 - 54</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ═══ Section: Audience infos ═══ -->
+                <div class="filters-section" id="filter-section-audience">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:9px;">
+                    <span class="filters-section-title">Filter by audience</span>
+                    <i class="fa-solid fa-circle-info" style="font-size:12px;color:#1b1e21;"></i>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:12px;">
+                    <!-- Audience rule row -->
+                    <div class="audience-row">
+                      <div class="audience-group">
+                        <div class="audience-col">
+                          <span class="audience-col-label">Rule</span>
+                          <div class="fi-select w-full">
+                            <span class="fi-placeholder">Select</span>
+                            <i class="fa-solid fa-chevron-down fi-chevron"></i>
+                          </div>
+                        </div>
+                        <div class="audience-col">
+                          <span class="audience-col-label">Percentage</span>
+                          <div class="fi-select w-full">
+            ''                <span class="fi-placeholder">Select</span>
+                            <i class="fa-solid fa-chevron-down fi-chevron"></i>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="audience-group">
+                        <div class="audience-col">
+                          <span class="audience-col-label">Type</span>
+                          <div class="fi-select w-full">
+                            <span class="fi-placeholder">Select</span>
+                            <i class="fa-solid fa-chevron-down fi-chevron"></i>
+                          </div>
+                        </div>
+                        <button class="fi-delete-btn">
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- Add audience rule button -->
+                    <button class="fi-add-rule-btn">
+                      <i class="fa-solid fa-plus" style="font-size:12px;"></i>
+                      <span>Add audience rule</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- ═══ Section: Brand safety threshold ═══ -->
+                <div class="filters-section" id="filter-section-brand-safety">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:9px;">
+                    <span class="filters-section-title">Brand safety threshold</span>
+                  </div>
+                  <div class="bs-threshold-grid">
+                    <!-- Harm & Danger -->
+                    <div class="bs-threshold-card" data-bs-cat="violence">
+                      <div class="bs-threshold-header">
+                        <i class="fa-solid fa-gun bs-threshold-icon"></i>
+                        <span class="bs-threshold-name">Harm &amp; Danger</span>
+                      </div>
+                      <div class="bs-threshold-row">
+                        <div class="bs-threshold-slider-wrap">
+                          <div class="bs-threshold-track">
+                            <div class="bs-threshold-fill" data-fill></div>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <div class="bs-threshold-handle" data-handle></div>
+                            <button type="button" class="bs-threshold-seg" data-step="1" aria-label="None"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="2" aria-label="Low"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="3" aria-label="Medium"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="4" aria-label="High"></button>
+                          </div>
+                        </div>
+                        <span class="bs-threshold-tag" data-tag>High</span>
+                      </div>
+                    </div>
+                    <!-- Hate & Extremism -->
+                    <div class="bs-threshold-card" data-bs-cat="extremism">
+                      <div class="bs-threshold-header">
+                        <i class="fa-solid fa-burst bs-threshold-icon"></i>
+                        <span class="bs-threshold-name">Hate &amp; Extremism</span>
+                      </div>
+                      <div class="bs-threshold-row">
+                        <div class="bs-threshold-slider-wrap">
+                          <div class="bs-threshold-track">
+                            <div class="bs-threshold-fill" data-fill></div>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <div class="bs-threshold-handle" data-handle></div>
+                            <button type="button" class="bs-threshold-seg" data-step="1" aria-label="None"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="2" aria-label="Low"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="3" aria-label="Medium"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="4" aria-label="High"></button>
+                          </div>
+                        </div>
+                        <span class="bs-threshold-tag" data-tag>High</span>
+                      </div>
+                    </div>
+                    <!-- Adult & explicit -->
+                    <div class="bs-threshold-card" data-bs-cat="adult">
+                      <div class="bs-threshold-header">
+                        <i class="fa-solid fa-vest bs-threshold-icon"></i>
+                        <span class="bs-threshold-name">Adult &amp; explicit</span>
+                      </div>
+                      <div class="bs-threshold-row">
+                        <div class="bs-threshold-slider-wrap">
+                          <div class="bs-threshold-track">
+                            <div class="bs-threshold-fill" data-fill></div>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <div class="bs-threshold-handle" data-handle></div>
+                            <button type="button" class="bs-threshold-seg" data-step="1" aria-label="None"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="2" aria-label="Low"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="3" aria-label="Medium"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="4" aria-label="High"></button>
+                          </div>
+                        </div>
+                        <span class="bs-threshold-tag" data-tag>High</span>
+                      </div>
+                    </div>
+                    <!-- Misinformation -->
+                    <div class="bs-threshold-card" data-bs-cat="misinformation">
+                      <div class="bs-threshold-header">
+                        <i class="fa-solid fa-face-meh bs-threshold-icon"></i>
+                        <span class="bs-threshold-name">Misinformation</span>
+                      </div>
+                      <div class="bs-threshold-row">
+                        <div class="bs-threshold-slider-wrap">
+                          <div class="bs-threshold-track">
+                            <div class="bs-threshold-fill" data-fill></div>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <div class="bs-threshold-handle" data-handle></div>
+                            <button type="button" class="bs-threshold-seg" data-step="1" aria-label="None"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="2" aria-label="Low"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="3" aria-label="Medium"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="4" aria-label="High"></button>
+                          </div>
+                        </div>
+                        <span class="bs-threshold-tag" data-tag>High</span>
+                      </div>
+                    </div>
+                    <!-- Gambling & activities -->
+                    <div class="bs-threshold-card" data-bs-cat="gambling">
+                      <div class="bs-threshold-header">
+                        <i class="fa-solid fa-dice bs-threshold-icon"></i>
+                        <span class="bs-threshold-name">Gambling &amp; activities</span>
+                      </div>
+                      <div class="bs-threshold-row">
+                        <div class="bs-threshold-slider-wrap">
+                          <div class="bs-threshold-track">
+                            <div class="bs-threshold-fill" data-fill></div>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <div class="bs-threshold-handle" data-handle></div>
+                            <button type="button" class="bs-threshold-seg" data-step="1" aria-label="None"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="2" aria-label="Low"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="3" aria-label="Medium"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="4" aria-label="High"></button>
+                          </div>
+                        </div>
+                        <span class="bs-threshold-tag" data-tag>High</span>
+                      </div>
+                    </div>
+                    <!-- Sensitive subjects -->
+                    <div class="bs-threshold-card" data-bs-cat="sensitive">
+                      <div class="bs-threshold-header">
+                        <i class="fa-solid fa-scale-balanced bs-threshold-icon"></i>
+                        <span class="bs-threshold-name">Sensitive topics</span>
+                      </div>
+                      <div class="bs-threshold-row">
+                        <div class="bs-threshold-slider-wrap">
+                          <div class="bs-threshold-track">
+                            <div class="bs-threshold-fill" data-fill></div>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <span class="bs-threshold-dot" aria-hidden="true"></span>
+                            <div class="bs-threshold-handle" data-handle></div>
+                            <button type="button" class="bs-threshold-seg" data-step="1" aria-label="None"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="2" aria-label="Low"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="3" aria-label="Medium"></button>
+                            <button type="button" class="bs-threshold-seg" data-step="4" aria-label="High"></button>
+                          </div>
+                        </div>
+                        <span class="bs-threshold-tag" data-tag>High</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ═══ Section: My saved lists ═══ -->
+                <div class="filters-section" id="filter-section-lists" style="border-bottom:none;">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:9px;">
+                    <span class="filters-section-title">Filter by lists</span>
+                  </div>
+                  <div class="lists-row">
+                    <div class="lists-col">
+                      <div class="lists-header">
+                        <span class="lists-header-label">Lists to exclude</span>
+                        <button class="lists-header-link">Select all</button>
+                      </div>
+                      <div class="fi-select w-full">
+                        <span class="fi-placeholder">Select</span>
+                        <i class="fa-solid fa-chevron-down fi-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="lists-col">
+                      <div class="lists-header">
+                        <span class="lists-header-label">Lists to search in</span>
+                        <button class="lists-header-link">Select all</button>
+                      </div>
+                      <div class="fi-select w-full">
+                        <span class="fi-placeholder">Select</span>
+                        <i class="fa-solid fa-chevron-down fi-chevron"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Gradient fade -->
+              <div class="filters-gradient"></div>
+
+              <!-- Footer -->
+              <div class="filters-footer">
+                <button class="fi-clear-btn">Clear all fields</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter chips row -->
+        <div class="flex items-center gap-[9px]">
+          <div id="filter-chips-bar" class="flex items-center gap-3 flex-1 min-w-0 flex-wrap">
+            <!-- Brand safety chips (dynamically injected) -->
+            <span id="bs-chips-slot"></span>
+            <!-- Chip: Politics -->
+            <div class="h-6 bg-white border border-gray-100 rounded-lg shadow-sm flex items-center gap-[6px] px-[6px] shrink-0">
+              <span class="text-xs text-gray-900 leading-[1.6]"><i class="fa-solid fa-hashtag text-[10px] mr-1"></i>Politics</span>
+              <i class="fa-solid fa-circle-xmark text-xs text-gray-400 cursor-pointer hover:text-gray-600"></i>
+            </div>
+            <!-- Chip: voting -->
+            <div class="h-6 bg-white border border-gray-100 rounded-lg shadow-sm flex items-center gap-[6px] px-[6px] shrink-0">
+              <span class="text-xs text-gray-900 leading-[1.6]"><i class="fa-solid fa-at text-[10px] mr-1"></i>voting</span>
+              <i class="fa-solid fa-circle-xmark text-xs text-gray-400 cursor-pointer hover:text-gray-600"></i>
+            </div>
+            <!-- Chip: Audience -->
+            <div class="h-6 bg-white border border-gray-100 rounded-lg shadow-sm flex items-center gap-[6px] px-[6px] shrink-0">
+              <span class="text-xs text-gray-900 leading-[1.6]">Audience: &ge; 80% Male</span>
+              <i class="fa-solid fa-circle-xmark text-xs text-gray-400 cursor-pointer hover:text-gray-600"></i>
+            </div>
+            <!-- Chip: Min engagement -->
+            <div class="h-6 bg-white border border-gray-100 rounded-lg shadow-sm flex items-center gap-[6px] px-[6px] shrink-0">
+              <span class="text-xs text-gray-900 leading-[1.6]">Min. avg engagement: 4%</span>
+              <i class="fa-solid fa-circle-xmark text-xs text-gray-400 cursor-pointer hover:text-gray-600"></i>
+            </div>
+            <!-- Chip: Country -->
+            <div class="h-6 bg-white border border-gray-100 rounded-lg shadow-sm flex items-center gap-[6px] px-[6px] shrink-0">
+              <span class="text-xs text-gray-900 leading-[1.6]">Country: United states</span>
+              <i class="fa-solid fa-circle-xmark text-xs text-gray-400 cursor-pointer hover:text-gray-600"></i>
+            </div>
+            <!-- Chip: Audience France -->
+            <div class="h-6 bg-white border border-gray-100 rounded-lg shadow-sm flex items-center gap-[6px] px-[6px] shrink-0">
+              <span class="text-xs text-gray-900 leading-[1.6]">Audience: &ge; 30% France</span>
+              <i class="fa-solid fa-circle-xmark text-xs text-gray-400 cursor-pointer hover:text-gray-600"></i>
+            </div>
+            <!-- Chip: Language -->
+            <div class="h-6 bg-white border border-gray-100 rounded-lg shadow-sm flex items-center gap-[6px] px-[6px] shrink-0">
+              <span class="text-xs text-gray-900 leading-[1.6]">Language: French</span>
+              <i class="fa-solid fa-circle-xmark text-xs text-gray-400 cursor-pointer hover:text-gray-600"></i>
+            </div>
+          </div>
+
+          <!-- Separator -->
+          <div class="w-px h-[22px] bg-gray-200 shrink-0"></div>
+
+          <!-- Reset Search link -->
+          <button class="flex items-center gap-[6px] shrink-0 hover:opacity-80">
+            <i class="fa-solid fa-rotate-left text-xs text-blue-600"></i>
+            <span class="text-xs text-blue-600 leading-[1.6]">Reset Search</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Results area -->
+      <div class="flex-1 overflow-y-auto bg-white">
+        <div class="px-[30px] pt-3 pb-8">
+          <!-- Mode switch -->
+          <div class="mb-3">
+            <div class="inline-flex items-center bg-white rounded-[20px] p-[3px]">
+              <button class="bg-primary-50 text-primary-500 font-semibold text-xs px-3 py-[6px] rounded-full shadow-sm leading-[1.6]">
+                All results
+              </button>
+              <button class="bg-white text-gray-600 text-xs px-3 py-[6px] rounded-full leading-[1.6]">
+                Smart results <span class="bg-primary-500 text-white text-[10px] font-semibold px-[6px] py-[1px] rounded ml-1">Beta</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Cards -->
+          <div class="flex flex-col gap-6" id="cards-container">
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Creator data
+    const creators = [
+      {
+        name: 'Carolestevens_',
+        location: 'United States',
+        label: 'LDA',
+        bio: '📍NJ&NYC 🌱 Sharing hidden gems and helping you glow up (in + out) 💌 hello@hangtw.com My...',
+        avatar: 'https://i.pravatar.cc/280?img=1',
+        posts: [
+          { img: 'https://picsum.photos/seed/cs1/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/cs2/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/cs3/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/cs4/168/168', platform: 'tiktok' },
+        ],
+        risk: 'safe',
+        riskLabel: 'Brand safe',
+        realUsers: '94%',
+        followers: '440k',
+        engagement: '9%',
+        followers2: '126k',
+        engagement2: '73%',
+        platforms: ['youtube', 'podcast', 'pinterest', 'x-twitter'],
+        categories: ['Beauty', 'Fashion', 'Lifestyle'],
+        brandSafety: { violence: 'none', misinformation: 'none', extremism: 'none', gambling: 'none', adult: 'none', sensitive: 'none' },
+      },
+      {
+        name: 'DarkVibesOnly',
+        location: 'United States',
+        label: 'LDA',
+        bio: '🔥 Controversial takes & unfiltered content 💀 No filter, no rules 📩 collabs@darkvibes.co',
+        avatar: 'https://i.pravatar.cc/280?img=12',
+        posts: [
+          { img: 'https://picsum.photos/seed/dv1/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/dv2/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/dv3/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/dv4/168/168', platform: 'tiktok' },
+        ],
+        risk: 'high',
+        riskLabel: 'High risk',
+        realUsers: '62%',
+        followers: '890k',
+        engagement: '3%',
+        followers2: '245k',
+        engagement2: '41%',
+        platforms: ['youtube', 'x-twitter'],
+        categories: ['Entertainment', 'Comedy', 'Lifestyle'],
+        brandSafety: { violence: 'high', misinformation: 'medium', extremism: 'high', gambling: 'low', adult: 'medium', sensitive: 'high' },
+      },
+      {
+        name: 'Henlancaster',
+        location: 'United States',
+        label: 'LDA',
+        bio: '📍NJ&NYC 🌱 Sharing hidden gems and helping you glow up (in + out) 💌 hello@hangtw.com My...',
+        avatar: 'https://i.pravatar.cc/280?img=3',
+        posts: [
+          { img: 'https://picsum.photos/seed/hl1/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/hl2/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/hl3/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/hl4/168/168', platform: 'tiktok' },
+        ],
+        risk: 'medium',
+        riskLabel: 'Medium risk',
+        realUsers: '94%',
+        followers: '440k',
+        engagement: '9%',
+        followers2: '126k',
+        engagement2: '73%',
+        platforms: ['youtube', 'podcast', 'pinterest', 'x-twitter'],
+        categories: ['Beauty', 'Fashion', 'Lifestyle'],
+        brandSafety: { violence: 'medium', misinformation: 'low', extremism: 'none', gambling: 'none', adult: 'low', sensitive: 'medium' },
+      },
+      {
+        name: 'Brandonyork96',
+        location: 'United States',
+        label: 'LDA',
+        bio: '📍NJ&NYC 🌱 Sharing hidden gems and helping you glow up (in + out) 💌 hello@hangtw.com My...',
+        avatar: 'https://i.pravatar.cc/280?img=11',
+        posts: [
+          { img: 'https://picsum.photos/seed/by1/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/by2/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/by3/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/by4/168/168', platform: 'tiktok' },
+        ],
+        risk: 'low',
+        riskLabel: 'Low risk',
+        realUsers: '94%',
+        followers: '440k',
+        engagement: '9%',
+        followers2: '126k',
+        engagement2: '73%',
+        platforms: ['youtube', 'pinterest', 'x-twitter'],
+        categories: ['Beauty', 'Fashion', 'Lifestyle'],
+        brandSafety: { violence: 'low', misinformation: 'none', extremism: 'none', gambling: 'medium', adult: 'none', sensitive: 'low' },
+      },
+      {
+        name: 'Billton',
+        location: 'United States',
+        label: 'LDA',
+        bio: '📍NJ&NYC 🌱 Sharing hidden gems and helping you glow up (in + out) 💌 hello@hangtw.com My...',
+        avatar: 'https://i.pravatar.cc/280?img=8',
+        posts: [
+          { img: 'https://picsum.photos/seed/bt1/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/bt2/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/bt3/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/bt4/168/168', platform: 'tiktok' },
+        ],
+        risk: 'safe',
+        riskLabel: 'Brand safe',
+        realUsers: '94%',
+        followers: '440k',
+        engagement: '9%',
+        followers2: '126k',
+        engagement2: '73%',
+        platforms: ['youtube', 'podcast', 'pinterest', 'x-twitter'],
+        categories: ['Beauty', 'Fashion', 'Lifestyle'],
+        brandSafety: { violence: 'none', misinformation: 'none', extremism: 'none', gambling: 'none', adult: 'none', sensitive: 'low' },
+      },
+      {
+        name: 'SophiaReed',
+        location: 'United States',
+        label: 'LDA',
+        bio: '📍NJ&NYC 🌱 Sharing hidden gems and helping you glow up (in + out) 💌 hello@hangtw.com My...',
+        avatar: 'https://i.pravatar.cc/280?img=5',
+        posts: [
+          { img: 'https://picsum.photos/seed/sr1/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/sr2/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/sr3/168/168', platform: 'instagram' },
+          { img: 'https://picsum.photos/seed/sr4/168/168', platform: 'tiktok' },
+        ],
+        risk: 'medium',
+        riskLabel: 'Medium risk',
+        realUsers: '94%',
+        followers: '440k',
+        engagement: '9%',
+        followers2: '126k',
+        engagement2: '73%',
+        platforms: ['youtube', 'pinterest', 'x-twitter'],
+        categories: ['Beauty', 'Fashion', 'Lifestyle'],
+        brandSafety: { violence: 'none', misinformation: 'medium', extremism: 'low', gambling: 'none', adult: 'none', sensitive: 'none' },
+      },
+    ];
+
+    // Brand safety risk signal button SVGs — extracted from the actual Figma assets
+    // Each call gets a unique `uid` to avoid SVG gradient ID collisions in the DOM
+    function getRiskButtonSvg(risk, uid) {
+      if (risk === 'safe') {
+        return `<svg width="24" height="24" viewBox="15.6 1.2 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="15.6" y="1.2" width="24" height="24" rx="12" fill="white" fill-opacity="0.7"/>
+          <rect x="15" y="0.6" width="25.2" height="25.2" rx="12.6" stroke="white" stroke-width="1.2"/>
+          <path d="M33.2537 8.36251C33.8725 8.64376 34.3506 9.23439 34.3506 9.96564C34.3225 12.7781 33.1693 17.8688 28.3318 20.2031C27.8537 20.4281 27.3193 20.4281 26.8412 20.2031C22.0037 17.8688 20.8506 12.7781 20.8506 9.96564C20.8225 9.23439 21.3006 8.64376 21.9193 8.36251L27.2068 6.11251C27.3193 6.05626 27.46 6.02814 27.6006 6.02814C27.7131 6.02814 27.8537 6.05626 27.9662 6.11251L33.2537 8.36251Z" fill="url(#g_s_${uid})"/>
+          <path d="M31.9244 10.7471C32.0823 10.9225 32.0823 11.1857 31.9244 11.3436L27.2926 15.9754C27.1171 16.1509 26.8539 16.1509 26.696 15.9754L24.3099 13.5893C24.1345 13.4314 24.1345 13.1683 24.3099 13.0104C24.4679 12.8349 24.731 12.8349 24.8889 13.0104L26.9767 15.0982L31.3278 10.7471C31.4857 10.5892 31.7489 10.5892 31.9068 10.7471H31.9244Z" fill="white"/>
+          <defs><linearGradient id="g_s_${uid}" x1="34.9551" y1="-5.74658" x2="12.4751" y2="1.75543" gradientUnits="userSpaceOnUse"><stop stop-color="#10B981"/><stop offset="0.4375" stop-color="#34D399"/><stop offset="1" stop-color="#D1FAE5"/></linearGradient></defs>
+        </svg>`;
+      }
+      if (risk === 'medium') {
+        return `<svg width="24" height="24" viewBox="15.6 1.2 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="15.6" y="1.2" width="24" height="24" rx="12" fill="white" fill-opacity="0.7"/>
+          <rect x="15" y="0.6" width="25.2" height="25.2" rx="12.6" stroke="white" stroke-width="1.2"/>
+          <path d="M33.2537 8.3625C33.8725 8.64375 34.3506 9.23437 34.3506 9.96562C34.3225 12.7781 33.1693 17.8687 28.3318 20.2031C27.8537 20.4281 27.3193 20.4281 26.8412 20.2031C22.0037 17.8687 20.8506 12.7781 20.8506 9.96562C20.8225 9.23437 21.3006 8.64375 21.9193 8.3625L27.2068 6.1125C27.3193 6.05625 27.46 6.02812 27.6006 6.02812C27.7131 6.02812 27.8537 6.05625 27.9662 6.1125L33.2537 8.3625Z" fill="url(#g_m_${uid})"/>
+          <path d="M28.2756 10.3031C28.2756 9.9375 27.9662 9.62812 27.6006 9.62812C27.2068 9.62812 26.9256 9.9375 26.9256 10.3031V13.4531C26.9256 13.8469 27.2068 14.1281 27.6006 14.1281C27.9662 14.1281 28.2756 13.8469 28.2756 13.4531V10.3031Z" fill="white"/>
+          <path d="M27.6006 16.8281C28.0787 16.8281 28.5006 16.4344 28.5006 15.9281C28.5006 15.45 28.0787 15.0281 27.6006 15.0281C27.0943 15.0281 26.7006 15.45 26.7006 15.9281C26.7006 16.4344 27.0943 16.8281 27.6006 16.8281Z" fill="white"/>
+          <defs><linearGradient id="g_m_${uid}" x1="27.6006" y1="5.42812" x2="27.6006" y2="19.8281" gradientUnits="userSpaceOnUse"><stop offset="0.350962" stop-color="#FB923C"/><stop offset="1" stop-color="#F97316"/></linearGradient></defs>
+        </svg>`;
+      }
+      if (risk === 'low') {
+        return `<svg width="24" height="24" viewBox="15.6 1.2 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="15.6" y="1.2" width="24" height="24" rx="12" fill="white" fill-opacity="0.7"/>
+          <rect x="15" y="0.6" width="25.2" height="25.2" rx="12.6" stroke="white" stroke-width="1.2"/>
+          <path d="M33.2537 8.3625C33.8725 8.64375 34.3506 9.23437 34.3506 9.96562C34.3225 12.7781 33.1693 17.8688 28.3318 20.2031C27.8537 20.4281 27.3193 20.4281 26.8412 20.2031C22.0037 17.8688 20.8506 12.7781 20.8506 9.96562C20.8225 9.23437 21.3006 8.64375 21.9193 8.3625L27.2068 6.1125C27.3193 6.05625 27.46 6.02812 27.6006 6.02812C27.7131 6.02812 27.8537 6.05625 27.9662 6.1125L33.2537 8.3625Z" fill="url(#g_l_${uid})"/>
+          <path d="M28.2756 10.3031C28.2756 9.9375 27.9662 9.62813 27.6006 9.62813C27.2068 9.62813 26.9256 9.9375 26.9256 10.3031V13.4531C26.9256 13.8469 27.2068 14.1281 27.6006 14.1281C27.9662 14.1281 28.2756 13.8469 28.2756 13.4531V10.3031Z" fill="white"/>
+          <path d="M27.6006 16.8281C28.0787 16.8281 28.5006 16.4344 28.5006 15.9281C28.5006 15.45 28.0787 15.0281 27.6006 15.0281C27.0943 15.0281 26.7006 15.45 26.7006 15.9281C26.7006 16.4344 27.0943 16.8281 27.6006 16.8281Z" fill="white"/>
+          <defs><linearGradient id="g_l_${uid}" x1="27.6006" y1="5.42812" x2="27.6006" y2="19.8281" gradientUnits="userSpaceOnUse"><stop offset="0.394231" stop-color="#FBBF24"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs>
+        </svg>`;
+      }
+      return `<svg width="24" height="24" viewBox="3.6 1.2 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3.6" y="1.2" width="24" height="24" rx="12" fill="white" fill-opacity="0.7"/>
+        <rect x="3" y="0.6" width="25.2" height="25.2" rx="12.6" stroke="white" stroke-width="1.2"/>
+        <path d="M21.2537 8.3625C21.8725 8.64375 22.3506 9.23437 22.3506 9.96562C22.3225 12.7781 21.1693 17.8687 16.3318 20.2031C15.8537 20.4281 15.3193 20.4281 14.8412 20.2031C10.0037 17.8687 8.85059 12.7781 8.85059 9.96562C8.82247 9.23437 9.30059 8.64375 9.91934 8.3625L15.2068 6.1125C15.3193 6.05625 15.46 6.02812 15.6006 6.02812C15.7131 6.02812 15.8537 6.05625 15.9662 6.1125L21.2537 8.3625Z" fill="url(#g_h_${uid})"/>
+        <path d="M16.2756 10.3031C16.2756 9.9375 15.9662 9.62813 15.6006 9.62813C15.2068 9.62813 14.9256 9.9375 14.9256 10.3031V13.4531C14.9256 13.8469 15.2068 14.1281 15.6006 14.1281C15.9662 14.1281 16.2756 13.8469 16.2756 13.4531V10.3031Z" fill="white"/>
+        <path d="M15.6006 16.8281C16.0787 16.8281 16.5006 16.4344 16.5006 15.9281C16.5006 15.45 16.0787 15.0281 15.6006 15.0281C15.0943 15.0281 14.7006 15.45 14.7006 15.9281C14.7006 16.4344 15.0943 16.8281 15.6006 16.8281Z" fill="white"/>
+        <defs><linearGradient id="g_h_${uid}" x1="15.6006" y1="5.71875" x2="15.6006" y2="20.1187" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4444"/><stop offset="1" stop-color="#D42817"/></linearGradient></defs>
+      </svg>`;
+    }
+
+    // Hover state SVGs — Style=Empty (outline shield) — unique IDs per card
+    function getRiskButtonSvgHover(risk, uid) {
+      if (risk === 'safe') {
+        return `<svg width="24" height="24" viewBox="3.6 1.2 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3.6" y="1.2" width="24" height="24" rx="12" fill="white" fill-opacity="0.7"/>
+          <rect x="3" y="0.6" width="25.2" height="25.2" rx="12.6" stroke="white" stroke-width="1.2"/>
+          <path d="M10.4537 9.60001C10.285 9.68439 10.2006 9.82501 10.2006 9.96564C10.2006 12.5531 11.2693 16.9688 15.4318 18.9656C15.5162 19.0219 15.6568 19.0219 15.7412 18.9656C19.9037 16.9969 20.9725 12.5531 21.0006 9.96564C21.0006 9.82501 20.8881 9.68439 20.7475 9.60001L15.6006 7.43439L10.4537 9.60001ZM21.2537 8.36251C21.8725 8.64376 22.3506 9.23439 22.3506 9.96564C22.3225 12.7781 21.1693 17.8688 16.3318 20.2031C15.8537 20.4281 15.3193 20.4281 14.8412 20.2031C10.0037 17.8688 8.85059 12.7781 8.85059 9.96564C8.82247 9.23439 9.30059 8.64376 9.91934 8.36251L15.2068 6.11251C15.3193 6.05626 15.46 6.02814 15.6006 6.02814C15.7131 6.02814 15.8537 6.05626 15.9662 6.11251L21.2537 8.36251Z" fill="url(#g_sh_${uid})"/>
+          <defs><linearGradient id="g_sh_${uid}" x1="22.9551" y1="-5.74658" x2="0.475091" y2="1.75543" gradientUnits="userSpaceOnUse"><stop stop-color="#10B981"/><stop offset="0.4375" stop-color="#34D399"/><stop offset="1" stop-color="#D1FAE5"/></linearGradient></defs>
+        </svg>`;
+      }
+      if (risk === 'medium') {
+        return `<svg width="24" height="24" viewBox="3.6 1.2 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3.6" y="1.2" width="24" height="24" rx="12" fill="white" fill-opacity="0.7"/>
+          <rect x="3" y="0.6" width="25.2" height="25.2" rx="12.6" stroke="white" stroke-width="1.2"/>
+          <path d="M10.4531 9.17187C10.2844 9.25625 10.2 9.39687 10.2 9.5375C10.2 12.125 11.2688 16.5406 15.4313 18.5375C15.5156 18.5937 15.6563 18.5937 15.7406 18.5375C19.9031 16.5687 20.9719 12.125 21 9.5375C21 9.39687 20.8875 9.25625 20.7469 9.17187L15.6 7.00625L10.4531 9.17187ZM21.2531 7.93437C21.8719 8.21562 22.35 8.80625 22.35 9.5375C22.3219 12.35 21.1688 17.4406 16.3313 19.775C15.8531 20 15.3188 20 14.8406 19.775C10.0031 17.4406 8.85 12.35 8.85 9.5375C8.82188 8.80625 9.3 8.21562 9.91875 7.93437L15.2063 5.68437C15.3188 5.62812 15.4594 5.6 15.6 5.6C15.7125 5.6 15.8531 5.62812 15.9656 5.68437L21.2531 7.93437ZM15.6 9.2C15.9656 9.2 16.275 9.50937 16.275 9.875V13.025C16.275 13.4187 15.9656 13.7 15.6 13.7C15.2063 13.7 14.925 13.4187 14.925 13.025V9.875C14.925 9.50937 15.2063 9.2 15.6 9.2ZM16.5 15.5C16.5 16.0062 16.0781 16.4 15.6 16.4C15.0938 16.4 14.7 16.0062 14.7 15.5C14.7 15.0219 15.0938 14.6 15.6 14.6C16.0781 14.6 16.5 15.0219 16.5 15.5Z" fill="url(#g_mh_${uid})"/>
+          <defs><linearGradient id="g_mh_${uid}" x1="15.6006" y1="5.61438" x2="15.6006" y2="19.6693" gradientUnits="userSpaceOnUse"><stop offset="0.350962" stop-color="#FB923C"/><stop offset="1" stop-color="#F97316"/></linearGradient></defs>
+        </svg>`;
+      }
+      if (risk === 'low') {
+        return `<svg width="24" height="24" viewBox="3.6 1.2 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3.6" y="1.2" width="24" height="24" rx="12" fill="white" fill-opacity="0.7"/>
+          <rect x="3" y="0.6" width="25.2" height="25.2" rx="12.6" stroke="white" stroke-width="1.2"/>
+          <path d="M10.4531 9.17188C10.2844 9.25625 10.2 9.39688 10.2 9.5375C10.2 12.125 11.2688 16.5406 15.4313 18.5375C15.5156 18.5938 15.6563 18.5938 15.7406 18.5375C19.9031 16.5688 20.9719 12.125 21 9.5375C21 9.39688 20.8875 9.25625 20.7469 9.17188L15.6 7.00625L10.4531 9.17188ZM21.2531 7.93438C21.8719 8.21563 22.35 8.80625 22.35 9.5375C22.3219 12.35 21.1688 17.4406 16.3313 19.775C15.8531 20 15.3188 20 14.8406 19.775C10.0031 17.4406 8.85 12.35 8.85 9.5375C8.82188 8.80625 9.3 8.21563 9.91875 7.93438L15.2063 5.68438C15.3188 5.62813 15.4594 5.6 15.6 5.6C15.7125 5.6 15.8531 5.62813 15.9656 5.68438L21.2531 7.93438ZM15.6 9.2C15.9656 9.2 16.275 9.50938 16.275 9.875V13.025C16.275 13.4188 15.9656 13.7 15.6 13.7C15.2063 13.7 14.925 13.4188 14.925 13.025V9.875C14.925 9.50938 15.2063 9.2 15.6 9.2ZM16.5 15.5C16.5 16.0063 16.0781 16.4 15.6 16.4C15.0938 16.4 14.7 16.0063 14.7 15.5C14.7 15.0219 15.0938 14.6 15.6 14.6C16.0781 14.6 16.5 15.0219 16.5 15.5Z" fill="url(#g_lh_${uid})"/>
+          <defs><linearGradient id="g_lh_${uid}" x1="15.6006" y1="5.61438" x2="15.6006" y2="19.6693" gradientUnits="userSpaceOnUse"><stop offset="0.394231" stop-color="#FBBF24"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs>
+        </svg>`;
+      }
+      return `<svg width="24" height="24" viewBox="3.6 1.2 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3.6" y="1.2" width="24" height="24" rx="12" fill="white" fill-opacity="0.7"/>
+        <rect x="3" y="0.6" width="25.2" height="25.2" rx="12.6" stroke="white" stroke-width="1.2"/>
+        <path d="M10.4531 9.17187C10.2844 9.25625 10.2 9.39687 10.2 9.5375C10.2 12.125 11.2688 16.5406 15.4313 18.5375C15.5156 18.5937 15.6563 18.5937 15.7406 18.5375C19.9031 16.5687 20.9719 12.125 21 9.5375C21 9.39687 20.8875 9.25625 20.7469 9.17187L15.6 7.00625L10.4531 9.17187ZM21.2531 7.93437C21.8719 8.21562 22.35 8.80625 22.35 9.5375C22.3219 12.35 21.1688 17.4406 16.3313 19.775C15.8531 20 15.3188 20 14.8406 19.775C10.0031 17.4406 8.85 12.35 8.85 9.5375C8.82188 8.80625 9.3 8.21562 9.91875 7.93437L15.2063 5.68437C15.3188 5.62812 15.4594 5.6 15.6 5.6C15.7125 5.6 15.8531 5.62812 15.9656 5.68437L21.2531 7.93437ZM15.6 9.2C15.9656 9.2 16.275 9.50937 16.275 9.875V13.025C16.275 13.4187 15.9656 13.7 15.6 13.7C15.2063 13.7 14.925 13.4187 14.925 13.025V9.875C14.925 9.50937 15.2063 9.2 15.6 9.2ZM16.5 15.5C16.5 16.0062 16.0781 16.4 15.6 16.4C15.0938 16.4 14.7 16.0062 14.7 15.5C14.7 15.0219 15.0938 14.6 15.6 14.6C16.0781 14.6 16.5 15.0219 16.5 15.5Z" fill="url(#g_hh_${uid})"/>
+        <defs><linearGradient id="g_hh_${uid}" x1="15.6006" y1="5.89804" x2="15.6006" y2="19.9529" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4444"/><stop offset="1" stop-color="#D42817"/></linearGradient></defs>
+      </svg>`;
+    }
+
+    function getRiskColor(risk) {
+      if (risk === 'safe') return 'text-emerald-500';
+      if (risk === 'medium') return 'text-amber-500';
+      if (risk === 'high') return 'text-red-500';
+      return 'text-amber-500';
+    }
+
+    function getRiskLabelColor(risk) {
+      if (risk === 'safe') return 'text-gray-500';
+      if (risk === 'medium') return 'text-amber-500';
+      if (risk === 'high') return 'text-red-500';
+      return 'text-amber-400';
+    }
+
+    function getPlatformIcon(platform) {
+      const map = {
+        'instagram': 'fa-brands fa-instagram',
+        'tiktok': 'fa-brands fa-tiktok',
+        'youtube': 'fa-brands fa-youtube',
+        'podcast': 'fa-solid fa-podcast',
+        'pinterest': 'fa-brands fa-pinterest-p',
+        'x-twitter': 'fa-brands fa-x-twitter',
+        'blog': 'fa-solid fa-blog',
+      };
+      return map[platform] || 'fa-solid fa-globe';
+    }
+
+    function getPlatformColor(platform) {
+      const map = {
+        'youtube': 'text-red-600',
+        'podcast': 'text-purple-500',
+        'pinterest': 'text-red-700',
+        'x-twitter': 'text-gray-900',
+        'blog': 'text-gray-400',
+      };
+      return map[platform] || 'text-gray-900';
+    }
+
+    function renderCard(creator, idx) {
+      return `
+        <div class="relative creator-card" data-creator-index="${idx}">
+          <div class="flex items-center">
+            <div class="bg-white flex items-center flex-1 overflow-hidden rounded-lg min-h-[140px]">
+              <!-- Avatar -->
+              <div class="shrink-0 relative">
+                <div class="w-[140px] h-[140px] rounded-lg border-2 border-white overflow-hidden">
+                  <img src="${creator.avatar}" alt="${creator.name}" class="w-full h-full object-cover" />
+                </div>
+              </div>
+
+              <!-- Content -->
+              <div class="flex items-center flex-1 gap-6 pl-6 pr-[30px] h-full min-w-0">
+                <!-- Creator info column -->
+                <div class="flex flex-col gap-[18px] items-center justify-center w-[260px] shrink-0">
+                  <!-- Header -->
+                  <div class="flex flex-col gap-[6px] w-full">
+                    <!-- Name row -->
+                    <div class="flex items-center gap-[9px] w-full">
+                      <div class="flex items-center flex-1 min-w-0">
+                        <span class="text-sm font-semibold text-gray-900 leading-[1.6] truncate">${creator.name}</span>
+                      </div>
+                      <div class="flex items-center gap-[6px] shrink-0">
+                        <!-- Split button -->
+                        <div class="flex items-start border border-gray-200 rounded overflow-hidden">
+                          <button class="w-6 h-6 flex items-center justify-center bg-white hover:bg-gray-50">
+                            <i class="fa-solid fa-user-plus text-xs text-gray-900"></i>
+                          </button>
+                          <div class="w-px bg-gray-200 self-stretch"></div>
+                          <button class="w-6 h-6 flex items-center justify-center bg-white hover:bg-gray-50">
+                            <i class="fa-solid fa-chevron-down text-xs text-gray-900"></i>
+                          </button>
+                        </div>
+                        <!-- More button -->
+                        <button class="w-6 h-6 flex items-center justify-center border border-gray-200 rounded bg-white hover:bg-gray-50">
+                          <i class="fa-solid fa-ellipsis text-xs text-gray-900"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- Location row -->
+                    <div class="flex items-center gap-[9px] w-full">
+                      <div class="flex items-center gap-[6px]">
+                        <span class="text-[16px]">🇺🇸</span>
+                        <span class="text-[10px] text-gray-900 leading-[1.6]">${creator.location}</span>
+                      </div>
+                      <div class="w-px h-3 bg-gray-200 rounded-sm"></div>
+                      <div class="flex items-center gap-[6px]">
+                        <span class="inline-flex items-center justify-center h-[18px] px-[6px] rounded-full bg-emerald-50">
+                          <i class="fa-solid fa-seedling text-xs text-emerald-600"></i>
+                        </span>
+                        <span class="text-[10px] text-gray-900 leading-[1.6]">${creator.label}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Bio -->
+                  <p class="text-xs text-gray-900 leading-[1.6] w-full truncate">${creator.bio}</p>
+                </div>
+
+                <!-- Separator -->
+                <div class="w-px h-[84px] bg-gray-200 shrink-0"></div>
+
+                <!-- Posts -->
+                <div class="flex items-start gap-[6px] shrink-0">
+                  ${creator.posts.map(post => `
+                    <div class="relative w-[78px] h-[78px] shrink-0">
+                      <div class="w-[78px] h-[78px] rounded-lg border border-white shadow-sm overflow-hidden">
+                        <img src="${post.img}" alt="" class="w-full h-full object-cover" loading="lazy" />
+                      </div>
+                      <div class="absolute -top-[6px] -right-[6px] w-6 h-6 rounded-full bg-white/70 backdrop-blur-sm border border-white shadow-sm flex items-center justify-center">
+                        <i class="${getPlatformIcon(post.platform)} text-xs text-gray-900"></i>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+
+                <!-- Brand safety -->
+                <div class="flex flex-col items-center shrink-0">
+                  <div class="flex flex-col items-center gap-[13px]">
+                    <div class="flex flex-col items-center gap-[3px]">
+                      <div class="risk-btn w-6 h-6 shrink-0">
+                        <div class="risk-default">${getRiskButtonSvg(creator.risk, idx)}</div>
+                        <div class="risk-hover">${getRiskButtonSvgHover(creator.risk, idx)}</div>
+                      </div>
+                      <span class="text-xs ${getRiskLabelColor(creator.risk)} leading-[1.6] text-center whitespace-nowrap">${creator.riskLabel}</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-[3px]">
+                      <span class="text-xs font-semibold ${getRiskColor(creator.risk)} leading-[1.6]">${creator.realUsers}</span>
+                      <span class="text-xs text-gray-500 leading-[1.6]">Real users</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Platform stats -->
+                <div class="flex flex-col gap-[6px] shrink-0">
+                  <!-- Row 1 -->
+                  <div class="flex items-center gap-[9px]">
+                    <div class="flex items-center gap-[6px] w-[62px]">
+                      <div class="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center bg-white">
+                        <i class="fa-brands fa-tiktok text-xs text-gray-900"></i>
+                      </div>
+                      <span class="text-xs text-gray-900 leading-[1.6]">${creator.followers}</span>
+                    </div>
+                    <div class="flex items-center gap-[6px]">
+                      <i class="fa-solid fa-chart-simple text-xs text-gray-900"></i>
+                      <span class="text-xs text-gray-900 leading-[1.6]">${creator.engagement}</span>
+                    </div>
+                  </div>
+                  <!-- Row 2 -->
+                  <div class="flex items-center gap-[9px]">
+                    <div class="flex items-center gap-[6px] w-[62px]">
+                      <div class="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center bg-white">
+                        <i class="fa-brands fa-tiktok text-xs text-gray-900"></i>
+                      </div>
+                      <span class="text-xs text-gray-900 leading-[1.6]">${creator.followers2}</span>
+                    </div>
+                    <div class="flex items-center gap-[6px]">
+                      <i class="fa-solid fa-chart-simple text-xs text-gray-900"></i>
+                      <span class="text-xs text-gray-900 leading-[1.6]">${creator.engagement2}</span>
+                    </div>
+                  </div>
+                  <!-- Other platforms -->
+                  <div class="flex items-center -space-x-[6px]">
+                    ${creator.platforms.map((p, i) => `
+                      <div class="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center bg-white relative" style="z-index: ${creator.platforms.length - i}">
+                        <i class="${getPlatformIcon(p)} text-xs ${getPlatformColor(p)}"></i>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="flex flex-col gap-[9px] shrink-0 w-[130px]">
+                  ${creator.categories.map(cat => `
+                    <div class="h-6 bg-gray-100 rounded-full px-[9px] flex items-center gap-[6px] w-fit">
+                      <i class="fa-solid fa-tag text-xs text-gray-900"></i>
+                      <span class="text-xs font-semibold text-gray-900 leading-[1.6]">${cat}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Swiper (accept/reject) -->
+          <div class="absolute -bottom-[9px] left-5 w-[100px] h-[30px] bg-white/80 backdrop-blur-sm border border-white rounded-lg shadow-lg flex items-center overflow-hidden">
+            <button class="flex-1 h-full flex items-center justify-center hover:bg-red-50 transition-colors">
+              <i class="fa-solid fa-xmark text-xs text-red-500"></i>
+            </button>
+            <div class="w-px h-[18px] bg-white"></div>
+            <button class="flex-1 h-full flex items-center justify-center hover:bg-green-50 transition-colors">
+              <i class="fa-solid fa-check text-xs text-emerald-500"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Render all cards
+    // Expose creators globally for brand safety filtering
+    window.creators = creators;
+    document.getElementById('cards-container').innerHTML = creators.map(renderCard).join('');
+  </script>
+  <!-- ═══ Creator Side Panel (Drawer) ═══ -->
+  <div id="drawer-overlay" class="drawer-overlay"></div>
+  <div id="creator-drawer" class="creator-drawer">
+    <!-- Top tab bar (Figma: Channels, Brand Safety, Emails, Notes, Profile) -->
+    <div class="drawer-topbar">
+      <div class="drawer-tabs">
+        <button class="drawer-tab active" data-drawer-tab="channels"><i class="fa-solid fa-tv"></i>Channels</button>
+        <button class="drawer-tab" data-drawer-tab="brand-safety"><i class="fa-solid fa-shield-halved drawer-tab-icon"></i><span class="drawer-tab-label">Brand Safety</span><span class="drawer-tab-sparkle-wrap" aria-hidden="true"><img src="Assets/tag-tab.png" alt="" class="drawer-tab-sparkle-img"></span></button>
+        <button class="drawer-tab" data-drawer-tab="emails"><i class="fa-regular fa-envelope"></i>Emails</button>
+        <button class="drawer-tab" data-drawer-tab="notes"><i class="fa-regular fa-note-sticky"></i>Notes</button>
+        <button class="drawer-tab" data-drawer-tab="profile"><i class="fa-regular fa-user"></i>Profile</button>
+      </div>
+      <div class="drawer-actions">
+        <button type="button" class="drawer-action-btn" id="drawer-export-pdf"><i class="fa-solid fa-file-pdf text-xs"></i> Export PDF</button>
+        <button class="drawer-action-btn"><i class="fa-solid fa-print text-xs"></i> Print</button>
+        <button class="drawer-action-btn-sq"><i class="fa-solid fa-link text-xs"></i></button>
+        <button class="drawer-action-btn-sq"><i class="fa-solid fa-eye text-xs"></i></button>
+        <button id="drawer-close" class="drawer-action-btn-sq"><i class="fa-solid fa-xmark text-xs"></i></button>
+      </div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="drawer-body">
+      <!-- Header (Figma: bg #f9fafb, 54px/30px padding, 3-column layout) -->
+      <div class="drawer-header">
+        <div class="drawer-header-inner">
+          <!-- Left: avatar + name, first/last, email, 4h reply + location -->
+          <div class="drawer-profile">
+            <div class="drawer-avatar" id="drawer-avatar"></div>
+            <div class="drawer-info">
+              <div class="drawer-name-row">
+                <span class="drawer-name" id="drawer-name">carolstevens_</span>
+              </div>
+              <div class="drawer-sub-row">
+                <span class="drawer-editable" id="drawer-firstname">Rick</span>
+                <span class="drawer-editable" id="drawer-lastname">Har</span>
+              </div>
+              <div class="drawer-email-row">
+                <i class="fa-regular fa-envelope drawer-meta-icon"></i>
+                <span class="drawer-editable" id="drawer-email">carolstevens@campaign.com</span>
+              </div>
+              <div class="drawer-meta-row-extra">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <i class="fa-regular fa-clock drawer-meta-icon"></i>
+                  <span class="drawer-meta-text">4h avg. reply</span>
+                </div>
+                <div class="drawer-location-block">
+                  <span class="drawer-flag" id="drawer-flag">🇺🇸</span>
+                  <span class="drawer-meta-text" id="drawer-location">United states</span>
+                  <button type="button" class="drawer-action-btn-sq" style="border:none;background:transparent;color:#2563eb;"><i class="fa-solid fa-lightbulb"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Middle: Lead split button, LDA, Affiliate, tags -->
+          <div class="drawer-meta">
+            <div class="drawer-meta-row">
+              <button type="button" class="drawer-lead-btn"><i class="fa-solid fa-users"></i></button>
+              <div class="drawer-split-btn">
+                <button type="button" class="drawer-split-main"><i class="fa-solid fa-user-tag"></i> Lead</button>
+                <button type="button" class="drawer-split-chevron"><i class="fa-solid fa-chevron-down"></i></button>
+              </div>
+            </div>
+            <div class="drawer-meta-row" style="gap:9px;">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <i class="fa-solid fa-seedling drawer-meta-icon"></i>
+                <span class="drawer-meta-text" id="drawer-label">LDA</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <i class="fa-solid fa-handshake drawer-meta-icon"></i>
+                <span class="drawer-meta-text">Affiliate</span>
+                <button type="button" class="drawer-action-btn-sq" style="border:none;background:transparent;color:#2563eb;"><i class="fa-solid fa-lightbulb"></i></button>
+              </div>
+            </div>
+            <div class="drawer-tags" id="drawer-tags">
+              <span class="drawer-tag"><i class="fa-solid fa-trophy"></i>Beauty</span>
+              <span class="drawer-tag"><i class="fa-solid fa-trophy"></i>Fashion</span>
+              <span class="drawer-tag"><i class="fa-solid fa-trophy"></i>Beauty</span>
+            </div>
+          </div>
+
+          <!-- Right: Risk overview (Figma: 260px) -->
+          <div class="drawer-risk-overview" id="drawer-risk-overview">
+            <div class="drawer-risk-overview-title">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Risk overview</span>
+            </div>
+            <div class="drawer-risk-rows">
+              <div class="drawer-risk-row">
+                <span class="drawer-risk-label">Harm &amp; danger</span>
+                <div class="drawer-risk-bar-wrap"><div class="drawer-risk-bar-fill" id="drawer-risk-violence" style="width:85%"></div></div>
+                <span class="drawer-risk-val" id="drawer-risk-violence-val">High</span>
+              </div>
+              <div class="drawer-risk-row">
+                <span class="drawer-risk-label">Misinformation</span>
+                <div class="drawer-risk-bar-wrap"><div class="drawer-risk-bar-fill" id="drawer-risk-misinformation" style="width:90%"></div></div>
+                <span class="drawer-risk-val" id="drawer-risk-misinformation-val">High</span>
+              </div>
+              <div class="drawer-risk-row">
+                <span class="drawer-risk-label">Hate &amp; Extremism</span>
+                <div class="drawer-risk-bar-wrap"><div class="drawer-risk-bar-fill medium" id="drawer-risk-extremism" style="width:32%"></div></div>
+                <span class="drawer-risk-val" id="drawer-risk-extremism-val">Medium</span>
+              </div>
+            </div>
+            <a href="#" class="drawer-risk-seemore">See more</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: Channels (default visible) ═══ -->
+      <div id="drawer-tab-channels" class="drawer-tab-content active">
+
+      <!-- Followers audience -->
+      <div class="drawer-audience">
+        <div class="drawer-audience-header">
+          <div class="drawer-audience-title"><i class="fa-brands fa-tiktok text-xs mr-[6px]"></i>Followers audience <i class="fa-solid fa-circle-info text-[10px] text-gray-400 ml-1"></i></div>
+          <div class="drawer-audience-tabs">
+            <button class="drawer-aud-tab active"><i class="fa-brands fa-instagram text-xs mr-1" style="color:#c13584"></i>Instagram</button>
+            <button class="drawer-aud-tab"><i class="fa-brands fa-tiktok text-xs mr-1"></i>TikTok</button>
+          </div>
+        </div>
+        <div class="drawer-audience-grid">
+          <!-- Countries -->
+          <div class="drawer-aud-col">
+            <div class="drawer-bar-row"><span class="drawer-bar-flag">🇺🇸</span><div class="drawer-bar"><div class="drawer-bar-fill" style="width:50%"></div></div><span class="drawer-bar-val">50%</span></div>
+            <div class="drawer-bar-row"><span class="drawer-bar-flag">🇫🇷</span><div class="drawer-bar"><div class="drawer-bar-fill" style="width:20%"></div></div><span class="drawer-bar-val">20%</span></div>
+            <div class="drawer-bar-row"><span class="drawer-bar-flag">🇪🇸</span><div class="drawer-bar"><div class="drawer-bar-fill" style="width:10%"></div></div><span class="drawer-bar-val">10%</span></div>
+            <div class="drawer-bar-row"><span class="drawer-bar-flag">🇩🇪</span><div class="drawer-bar"><div class="drawer-bar-fill" style="width:10%"></div></div><span class="drawer-bar-val">10%</span></div>
+            <div class="drawer-bar-row"><span class="drawer-bar-flag">🇮🇹</span><div class="drawer-bar"><div class="drawer-bar-fill" style="width:5%"></div></div><span class="drawer-bar-val">5%</span></div>
+            <div class="drawer-aud-legend"><span class="drawer-legend-dot"></span>Countries</div>
+          </div>
+          <!-- Age -->
+          <div class="drawer-aud-col">
+            <div class="drawer-bar-row"><span class="drawer-bar-label">13-17</span><div class="drawer-bar"><div class="drawer-bar-fill" style="width:20%"></div></div><span class="drawer-bar-val">20%</span></div>
+            <div class="drawer-bar-row"><span class="drawer-bar-label">18-24</span><div class="drawer-bar"><div class="drawer-bar-fill" style="width:50%"></div></div><span class="drawer-bar-val">50%</span></div>
+            <div class="drawer-bar-row"><span class="drawer-bar-label">25-34</span><div class="drawer-bar"><div class="drawer-bar-fill" style="width:20%"></div></div><span class="drawer-bar-val">20%</span></div>
+            <div class="drawer-bar-row"><span class="drawer-bar-label">35-44</span><div class="drawer-bar"><div class="drawer-bar-fill" style="width:5%"></div></div><span class="drawer-bar-val">5%</span></div>
+            <div class="drawer-bar-row"><span class="drawer-bar-label">46-64</span><div class="drawer-bar"><div class="drawer-bar-fill" style="width:5%"></div></div><span class="drawer-bar-val">5%</span></div>
+            <div class="drawer-aud-legend"><span class="drawer-legend-dot"></span>Age</div>
+          </div>
+          <!-- Gender -->
+          <div class="drawer-aud-col drawer-gender-col">
+            <div class="drawer-gender-item"><i class="fa-solid fa-venus text-base" style="color:#c13584"></i><span class="drawer-gender-val">50%</span><span class="drawer-gender-label">Female</span></div>
+            <div class="drawer-gender-item"><i class="fa-solid fa-mars text-base" style="color:#0d0de6"></i><span class="drawer-gender-val">50%</span><span class="drawer-gender-label">Male</span></div>
+            <div class="drawer-aud-legend"><span class="drawer-legend-dot"></span>Gender</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Social channel rows -->
+      <div class="drawer-channels" id="drawer-channels">
+        <!-- Instagram -->
+        <div class="drawer-channel" style="background:#f9ebf3">
+          <div class="drawer-ch-badge" style="background:#c13584"><i class="fa-brands fa-instagram text-xl text-white"></i><span class="drawer-ch-count">20k</span></div>
+          <div class="drawer-ch-info">
+            <div class="drawer-ch-name" style="color:#c13584">rickhar <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-900"></i></div>
+            <div class="drawer-ch-sub">Instagram</div>
+          </div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">$720 - $1.080 <i class="fa-solid fa-sack-dollar text-[10px]"></i></span><span class="drawer-ch-label">Est. price range <i class="fa-solid fa-circle-info text-[10px]"></i></span></div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">4.20%</span><span class="drawer-ch-label">Avg. engagement rate <i class="fa-solid fa-circle-info text-[10px]"></i></span></div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">$0.23</span><span class="drawer-ch-label">CPE</span></div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">806 <i class="fa-regular fa-heart text-[10px]"></i></span><span class="drawer-ch-label">Avg. likes</span></div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">25.5 <i class="fa-regular fa-comment text-[10px]"></i></span><span class="drawer-ch-label">Avg. comments</span></div>
+          <div class="drawer-ch-expand"><i class="fa-solid fa-caret-down"></i></div>
+        </div>
+        <!-- TikTok -->
+        <div class="drawer-channel" style="background:#f5f5f5">
+          <div class="drawer-ch-badge" style="background:#333"><i class="fa-brands fa-tiktok text-xl text-white"></i><span class="drawer-ch-count">20k</span></div>
+          <div class="drawer-ch-info">
+            <div class="drawer-ch-name">rickhar <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-900"></i></div>
+            <div class="drawer-ch-sub">TikTok</div>
+          </div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">4.20%</span><span class="drawer-ch-label">Avg. engagement rate</span></div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">350k</span><span class="drawer-ch-label">Avg. views</span></div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">806 <i class="fa-regular fa-heart text-[10px]"></i></span><span class="drawer-ch-label">Avg. likes</span></div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">806 <i class="fa-solid fa-retweet text-[10px]"></i></span><span class="drawer-ch-label">Avg. likes</span></div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">25.5 <i class="fa-regular fa-comment text-[10px]"></i></span><span class="drawer-ch-label">Avg. comments</span></div>
+          <div class="drawer-ch-expand"><i class="fa-solid fa-caret-down"></i></div>
+        </div>
+        <!-- YouTube -->
+        <div class="drawer-channel" style="background:#fef2f2">
+          <div class="drawer-ch-badge" style="background:#cd201f"><i class="fa-brands fa-youtube text-xl text-white"></i><span class="drawer-ch-count">20k</span></div>
+          <div class="drawer-ch-info">
+            <div class="drawer-ch-name" style="color:#cd201f">rickhar <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-900"></i></div>
+            <div class="drawer-ch-sub">YouTube</div>
+          </div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">$720 - $1.080 <i class="fa-solid fa-sack-dollar text-[10px]"></i></span><span class="drawer-ch-label">Est. price range <i class="fa-solid fa-circle-info text-[10px]"></i></span></div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">4.20%</span><span class="drawer-ch-label">Avg. engagement rate <i class="fa-solid fa-circle-info text-[10px]"></i></span></div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">$0.23</span><span class="drawer-ch-label">CPV</span></div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">25.5 <i class="fa-regular fa-comment text-[10px]"></i></span><span class="drawer-ch-label">Avg. views</span></div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">806 <i class="fa-regular fa-heart text-[10px]"></i></span><span class="drawer-ch-label">Avg. likes</span></div>
+          <div class="drawer-ch-expand"><i class="fa-solid fa-caret-down"></i></div>
+        </div>
+        <!-- X -->
+        <div class="drawer-channel" style="background:#f5f5f5">
+          <div class="drawer-ch-badge" style="background:#1b1e21"><i class="fa-brands fa-x-twitter text-xl text-white"></i><span class="drawer-ch-count">20k</span></div>
+          <div class="drawer-ch-info">
+            <div class="drawer-ch-name">rickhar <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-900"></i></div>
+            <div class="drawer-ch-sub">X</div>
+          </div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">4.20%</span><span class="drawer-ch-label">Avg. engagement rate</span></div>
+          <div class="drawer-ch-metric"><span class="drawer-ch-val">76.36k <i class="fa-solid fa-retweet text-[10px]"></i></span><span class="drawer-ch-label">Avg. retweets</span></div>
+          <div class="drawer-ch-expand"><i class="fa-solid fa-caret-down"></i></div>
+        </div>
+      </div>
+      </div><!-- /drawer-tab-channels -->
+
+      <!-- TAB: Emails -->
+      <div id="drawer-tab-emails" class="drawer-tab-content">
+        <div class="drawer-placeholder-content"><p>Emails</p></div>
+      </div>
+      <!-- TAB: Notes -->
+      <div id="drawer-tab-notes" class="drawer-tab-content">
+        <div class="drawer-placeholder-content"><p>Notes</p></div>
+      </div>
+      <!-- TAB: Profile -->
+      <div id="drawer-tab-profile" class="drawer-tab-content">
+        <div class="drawer-placeholder-content"><p>Profile</p></div>
+      </div>
+
+      <!-- ═══ TAB: Brand Safety (Figma: radar left, AI + accordions right). Set data-brand-safe="true" for safe-state UI. ═══ -->
+      <div id="drawer-tab-brand-safety" class="drawer-tab-content" data-brand-safe="false">
+        <div class="bst-page">
+          <!-- Top row: platform filter only — right-aligned, 18px padding, above all content -->
+          <div class="bst-platform-header">
+            <div class="bst-pill-group" id="bst-platform-pills">
+              <button type="button" class="bst-pill active" data-platform="all">All</button>
+              <button type="button" class="bst-pill" data-platform="instagram"><i class="fa-brands fa-instagram" style="color:#c13584"></i> Instagram</button>
+              <button type="button" class="bst-pill" data-platform="tiktok"><i class="fa-brands fa-tiktok"></i> TikTok</button>
+              <button type="button" class="bst-pill" data-platform="youtube"><i class="fa-brands fa-youtube" style="color:#cd201f"></i> YouTube</button>
+              <button type="button" class="bst-pill" data-platform="twitch"><i class="fa-brands fa-twitch" style="color:#6441a5"></i> Twitch</button>
+            </div>
+          </div>
+
+          <!-- Content row: left column (radar + contributing) + right column (AI banner + accordions) -->
+          <div class="bst-content-row">
+          <!-- LEFT COLUMN: Radar + Top/Other contributing -->
+          <div class="bst-left-col">
+            <div class="bst-radar-wrap">
+              <svg id="bst-radar-svg" class="bst-radar-svg" viewBox="0 0 270 224" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="bst-radar-fill" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop id="bst-radar-stop1" offset="0%" stop-color="rgba(251,191,36,0.5)"/>
+                    <stop id="bst-radar-stop2" offset="100%" stop-color="rgba(245,158,11,0.2)"/>
+                  </linearGradient>
+                </defs>
+                <!-- Spider chart: center (135,112), R=78. 6 axes: 0°(top), 60°, 120°, 180°, 240°, 300° from top clockwise -->
+                <g id="bst-radar-grid" stroke="#e5e7eb" stroke-width="0.5" fill="none">
+                  <!-- Angular 6-axis grid: nested hexagons (25%, 50%, 75%, 100%), no circles -->
+                  <polygon points="135,92.5 151.9,102.25 151.9,121.75 135,131.5 118.1,121.75 118.1,102.25"/>
+                  <polygon points="135,73 168.9,89.5 168.9,134.5 135,151 101.1,134.5 101.1,89.5"/>
+                  <polygon points="135,53.5 185.9,76.75 185.9,141.25 135,170.5 84.1,141.25 84.1,76.75"/>
+                  <polygon points="135,34 202.5,73 202.5,151 135,190 67.5,151 67.5,73"/>
+                  <!-- 6 radial axes -->
+                  <line x1="135" y1="112" x2="135" y2="34"/>
+                  <line x1="135" y1="112" x2="202.5" y2="73"/>
+                  <line x1="135" y1="112" x2="202.5" y2="151"/>
+                  <line x1="135" y1="112" x2="135" y2="190"/>
+                  <line x1="135" y1="112" x2="67.5" y2="151"/>
+                  <line x1="135" y1="112" x2="67.5" y2="73"/>
+                </g>
+                <!-- Data polygon (points set by script from platform data) -->
+                <polygon id="bst-radar-polygon" class="bst-radar-polygon" fill="url(#bst-radar-fill)" stroke="#f59e0b" stroke-width="1.5" points="135,34 202.5,73 202.5,151 135,190 67.5,151 67.5,73"/>
+                <!-- Axis labels: one per axis, centered on axis line, even spacing, no duplicates -->
+                <text x="135" y="20" class="bst-radar-label" text-anchor="middle">Harm &amp; danger</text>
+                <text x="213" y="68" class="bst-radar-label" text-anchor="start"><tspan x="213" dy="0">Extremism &amp;</tspan><tspan x="213" dy="11">hatred</tspan></text>
+                <text x="213" y="156" class="bst-radar-label" text-anchor="start"><tspan x="213" dy="0">Sensitive</tspan><tspan x="213" dy="11">topics</tspan></text>
+                <text x="135" y="206" class="bst-radar-label" text-anchor="middle"><tspan x="135" dy="0">Gambling &amp;</tspan><tspan x="135" dy="11">activities</tspan></text>
+                <text x="57" y="156" class="bst-radar-label" text-anchor="end"><tspan x="57" dy="0">Adult &amp;</tspan><tspan x="57" dy="11">explicit</tspan></text>
+                <text x="57" y="68" class="bst-radar-label" text-anchor="end"><tspan x="57" dy="0">Regulated</tspan><tspan x="57" dy="11">activities</tspan></text>
+              </svg>
+            </div>
+            <div class="bst-top-contrib">
+              <p class="bst-top-contrib-title">Top Contributing Risk Categories</p>
+              <div class="bst-contrib-list bst-contrib-top">
+                <div class="bst-contrib-item">
+                  <span class="bst-contrib-name">Harm &amp; danger</span>
+                  <div class="bst-contrib-bar"><div class="bst-contrib-fill bst-fill-danger" id="bst-top-harm" style="width:70%"></div></div>
+                  <span class="bst-contrib-pct">70%</span>
+                  <span class="bst-contrib-platform" id="bst-top-harm-platform">Mainly Twitter</span>
+                </div>
+                <div class="bst-contrib-item">
+                  <span class="bst-contrib-name">Misinformation</span>
+                  <div class="bst-contrib-bar"><div class="bst-contrib-fill bst-fill-danger" id="bst-top-misinfo" style="width:65%"></div></div>
+                  <span class="bst-contrib-pct">65%</span>
+                  <span class="bst-contrib-platform" id="bst-top-misinfo-platform">Mainly Twitter</span>
+                </div>
+                <div class="bst-contrib-item">
+                  <span class="bst-contrib-name">Hate &amp; Extremism</span>
+                  <div class="bst-contrib-bar"><div class="bst-contrib-fill bst-fill-warning" id="bst-top-hate" style="width:50%"></div></div>
+                  <span class="bst-contrib-pct">50%</span>
+                  <span class="bst-contrib-platform" id="bst-top-hate-platform">Mainly Twitter</span>
+                </div>
+              </div>
+            </div>
+            <div class="bst-other-contrib">
+              <div class="bst-other-contrib-title">
+                <span>Other Contributing Categories</span>
+                <i class="fa-solid fa-circle-info"></i>
+              </div>
+              <div class="bst-contrib-list bst-contrib-other">
+                <div class="bst-contrib-item">
+                  <span class="bst-contrib-name">Adult &amp; Explicit</span>
+                  <div class="bst-contrib-bar"><div class="bst-contrib-fill bst-fill-yellow" id="bst-other-adult" style="width:40%"></div></div>
+                  <span class="bst-contrib-pct">40%</span>
+                  <span class="bst-contrib-platform" id="bst-other-adult-platform">Mainly Twitch</span>
+                </div>
+                <div class="bst-contrib-item">
+                  <span class="bst-contrib-name">Regulated Activities</span>
+                  <div class="bst-contrib-bar"><div class="bst-contrib-fill bst-fill-yellow" id="bst-other-reg" style="width:35%"></div></div>
+                  <span class="bst-contrib-pct">35%</span>
+                  <span class="bst-contrib-platform" id="bst-other-reg-platform">Mainly Youtube</span>
+                </div>
+                <div class="bst-contrib-item">
+                  <span class="bst-contrib-name">Sensitive topics</span>
+                  <div class="bst-contrib-bar"><div class="bst-contrib-fill bst-fill-yellow" id="bst-other-sens" style="width:20%"></div></div>
+                  <span class="bst-contrib-pct">20%</span>
+                  <span class="bst-contrib-platform" id="bst-other-sens-platform">Mainly Youtube</span>
+                </div>
+                <div class="bst-contrib-item">
+                  <span class="bst-contrib-name">Misinformation</span>
+                  <div class="bst-contrib-bar"><div class="bst-contrib-fill" id="bst-other-misinfo" style="width:0%"></div></div>
+                  <span class="bst-contrib-pct">0%</span>
+                  <span class="bst-contrib-platform" id="bst-other-misinfo-platform">-</span>
+                </div>
+              </div>
+              <a href="#" class="bst-learn-link">Learn more</a>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: AI banner + Flagged content + Accordions -->
+          <div class="bst-right-col">
+            <!-- AI Summary banner (Jaice IA): expandable, with Jaice logo -->
+            <div class="bst-ai-banner" id="bst-ai-banner" data-bst-banner-state="risk">
+              <button type="button" class="bst-ai-banner-toggle" id="bst-ai-banner-toggle" aria-expanded="false" aria-controls="bst-ai-banner-body">
+                <img src="Assets/Jaice Blob/Idle_128x128.gif" alt="Jaice" class="bst-ai-logo" />
+                <p class="bst-ai-summary bst-ai-summary-preview" id="bst-ai-summary">This creator shows a high brand safety risk profile based on automated content analysis.</p>
+                <i class="fa-solid fa-chevron-down bst-ai-chevron" aria-hidden="true"></i>
+              </button>
+              <div class="bst-ai-banner-body" id="bst-ai-banner-body" role="region" aria-label="AI brand safety interpretation">
+                <section class="bst-ai-section">
+                  <h4 class="bst-ai-heading">Risk Overview</h4>
+                  <p class="bst-ai-overview">This creator shows a high brand safety risk profile based on automated content analysis. Risk levels are primarily influenced by repeated detections within the Harm &amp; Danger and Misinformation categories.</p>
+                </section>
+                <section class="bst-ai-section">
+                  <h4 class="bst-ai-heading">Detected Signals</h4>
+                  <p class="bst-ai-signals-intro">Detected signals include:</p>
+                  <ul class="bst-ai-bullets" id="bst-ai-bullets">
+                    <li>Visual presence of weapons (e.g. firearms)</li>
+                    <li>Aggressive or explicit gestures (e.g. middle finger)</li>
+                    <li>Text patterns associated with potentially misleading claims</li>
+                  </ul>
+                </section>
+                <section class="bst-ai-section">
+                  <h4 class="bst-ai-heading">Methodology Clarification</h4>
+                  <p class="bst-ai-methodology">Flags are triggered by identifiable objects and behaviors detected in images and captions, rather than inferred intent.</p>
+                </section>
+              </div>
+            </div>
+
+            <!-- Flagged content title -->
+            <div class="bst-flagged-title">
+              <i class="fa-solid fa-sparkles bst-sparkles"></i>
+              <span>Flagged content</span>
+              <i class="fa-solid fa-circle-info bst-info"></i>
+            </div>
+
+            <!-- Safe state message (shown when no sensitive content detected) -->
+            <div class="bst-safe-message" id="bst-safe-message" aria-live="polite">
+              No sensitive content detected across selected platforms.
+            </div>
+
+            <!-- Accordions (collapsed by default; risk badge in header; always present even when safe) -->
+            <div class="bst-accordion" data-accordion>
+              <button type="button" class="bst-accordion-header" data-accordion-toggle>
+                <div class="bst-accordion-left">
+                  <i class="fa-solid fa-gun bst-accordion-icon"></i>
+                  <div>
+                    <span class="bst-accordion-name">Harm &amp; danger</span>
+                    <span class="bst-accordion-sub">3 sensitive content detected</span>
+                  </div>
+                </div>
+                <span class="bst-risk-badge bst-risk-high">High risk</span>
+                <i class="fa-solid fa-chevron-down bst-accordion-chevron"></i>
+              </button>
+              <div class="bst-accordion-body">
+                <div class="bst-flagged-item">
+                  <div class="bst-flagged-thumb"></div>
+                  <div class="bst-flagged-detail">
+                    <div class="bst-flagged-meta">
+                      <i class="fa-brands fa-instagram bst-flagged-platform" style="color:#c13584"></i>
+                      <span class="bst-flagged-date">9 days ago</span>
+                      <span class="bst-subtag bst-subtag-danger"><i class="fa-solid fa-gun"></i> Gun</span>
+                      <span class="bst-subtag bst-subtag-neutral">Text</span>
+                    </div>
+                    <div class="bst-flagged-source"><span class="bst-source-label">Description :</span> <span class="bst-flagged-preview">What a savage revolution! The energy is explosive What a savage revolution! The energy is explosive</span></div>
+                  </div>
+                </div>
+                <div class="bst-flagged-item">
+                  <div class="bst-flagged-thumb"></div>
+                  <div class="bst-flagged-detail">
+                    <div class="bst-flagged-meta">
+                      <i class="fa-solid fa-user bst-flagged-platform"></i>
+                      <span class="bst-flagged-date">9 days ago</span>
+                      <span class="bst-subtag bst-subtag-danger"><i class="fa-solid fa-gun"></i> Gun</span>
+                      <span class="bst-subtag bst-subtag-neutral">Text</span>
+                    </div>
+                    <div class="bst-flagged-source"><span class="bst-source-label">Profile Bio :</span> <span class="bst-flagged-preview">What a savage revolution! The energy is explosive What a savage revolution! The energy is explosive…</span></div>
+                  </div>
+                </div>
+                <div class="bst-flagged-item">
+                  <div class="bst-flagged-thumb"></div>
+                  <div class="bst-flagged-detail">
+                    <div class="bst-flagged-meta">
+                      <i class="fa-brands fa-youtube bst-flagged-platform" style="color:#cd201f"></i>
+                      <span class="bst-flagged-date">9 days ago</span>
+                      <span class="bst-subtag bst-subtag-danger">Middlefinger</span>
+                      <span class="bst-subtag bst-subtag-neutral">Image</span>
+                      <span class="bst-subtag bst-subtag-neutral">Text</span>
+                    </div>
+                    <div class="bst-flagged-source"><span class="bst-source-label">Description :</span> <span class="bst-flagged-preview">What a savage revolution! The energy is explosive What a savage revolution! The energy is explosive</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bst-accordion" data-accordion>
+              <button type="button" class="bst-accordion-header" data-accordion-toggle>
+                <div class="bst-accordion-left">
+                  <i class="fa-solid fa-face-meh bst-accordion-icon"></i>
+                  <div>
+                    <span class="bst-accordion-name">Misinformation</span>
+                    <span class="bst-accordion-sub">3 sensitive content detected</span>
+                  </div>
+                </div>
+                <span class="bst-risk-badge bst-risk-medium">Medium risk</span>
+                <i class="fa-solid fa-chevron-down bst-accordion-chevron"></i>
+              </button>
+              <div class="bst-accordion-body">
+                <div class="bst-flagged-item">
+                  <div class="bst-flagged-thumb"></div>
+                  <div class="bst-flagged-detail">
+                    <div class="bst-flagged-meta">
+                      <i class="fa-brands fa-instagram bst-flagged-platform" style="color:#c13584"></i>
+                      <span class="bst-flagged-date">5 days ago</span>
+                      <span class="bst-subtag bst-subtag-danger">False claim</span>
+                      <span class="bst-subtag bst-subtag-neutral">Text</span>
+                    </div>
+                    <div class="bst-flagged-source"><span class="bst-source-label">Post :</span> <span class="bst-flagged-preview">Content that was flagged for misinformation…</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bst-accordion" data-accordion>
+              <button type="button" class="bst-accordion-header" data-accordion-toggle>
+                <div class="bst-accordion-left">
+                  <i class="fa-solid fa-burst bst-accordion-icon"></i>
+                  <div>
+                    <span class="bst-accordion-name">Hate &amp; extremism</span>
+                    <span class="bst-accordion-sub">2 sensitive content detected</span>
+                  </div>
+                </div>
+                <span class="bst-risk-badge bst-risk-medium">Medium risk</span>
+                <i class="fa-solid fa-chevron-down bst-accordion-chevron"></i>
+              </button>
+              <div class="bst-accordion-body">
+                <div class="bst-flagged-item">
+                  <div class="bst-flagged-thumb"></div>
+                  <div class="bst-flagged-detail">
+                    <div class="bst-flagged-meta">
+                      <i class="fa-brands fa-x-twitter bst-flagged-platform"></i>
+                      <span class="bst-flagged-date">14 days ago</span>
+                      <span class="bst-subtag bst-subtag-danger">Extremism</span>
+                      <span class="bst-subtag bst-subtag-neutral">Text</span>
+                    </div>
+                    <div class="bst-flagged-source"><span class="bst-source-label">Description :</span> <span class="bst-flagged-preview">Flagged content preview…</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bst-accordion" data-accordion>
+              <button type="button" class="bst-accordion-header" data-accordion-toggle>
+                <div class="bst-accordion-left">
+                  <i class="fa-solid fa-vest bst-accordion-icon"></i>
+                  <div>
+                    <span class="bst-accordion-name">Adult &amp; explicit</span>
+                    <span class="bst-accordion-sub">3 sensitive content detected</span>
+                  </div>
+                </div>
+                <span class="bst-risk-badge bst-risk-low">Low risk</span>
+                <i class="fa-solid fa-chevron-down bst-accordion-chevron"></i>
+              </button>
+              <div class="bst-accordion-body">
+                <div class="bst-flagged-item">
+                  <div class="bst-flagged-thumb"></div>
+                  <div class="bst-flagged-detail">
+                    <div class="bst-flagged-meta">
+                      <i class="fa-brands fa-twitch bst-flagged-platform" style="color:#6441a5"></i>
+                      <span class="bst-flagged-date">2 days ago</span>
+                      <span class="bst-subtag bst-subtag-danger">Explicit</span>
+                      <span class="bst-subtag bst-subtag-neutral">Image</span>
+                    </div>
+                    <div class="bst-flagged-source"><span class="bst-source-label">Post :</span> <span class="bst-flagged-preview">Content preview…</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gambling & activities: always visible (No risk when empty) -->
+            <div class="bst-accordion" data-accordion>
+              <button type="button" class="bst-accordion-header" data-accordion-toggle>
+                <div class="bst-accordion-left">
+                  <i class="fa-solid fa-dice bst-accordion-icon"></i>
+                  <div>
+                    <span class="bst-accordion-name">Gambling &amp; activities</span>
+                    <span class="bst-accordion-sub">0 sensitive content detected</span>
+                  </div>
+                </div>
+                <span class="bst-risk-badge bst-risk-none">No risk</span>
+                <i class="fa-solid fa-chevron-down bst-accordion-chevron"></i>
+              </button>
+              <div class="bst-accordion-body">
+                <p class="bst-accordion-empty">No flagged items.</p>
+              </div>
+            </div>
+
+            <!-- Sensitive topics: always visible (No risk when empty) -->
+            <div class="bst-accordion" data-accordion>
+              <button type="button" class="bst-accordion-header" data-accordion-toggle>
+                <div class="bst-accordion-left">
+                  <i class="fa-solid fa-heart-pulse bst-accordion-icon"></i>
+                  <div>
+                    <span class="bst-accordion-name">Sensitive topics</span>
+                    <span class="bst-accordion-sub">0 sensitive content detected</span>
+                  </div>
+                </div>
+                <span class="bst-risk-badge bst-risk-none">No risk</span>
+                <i class="fa-solid fa-chevron-down bst-accordion-chevron"></i>
+              </button>
+              <div class="bst-accordion-body">
+                <p class="bst-accordion-empty">No flagged items.</p>
+              </div>
+            </div>
+          </div>
+          </div><!-- /.bst-content-row -->
+        </div>
+      </div><!-- /drawer-tab-brand-safety -->
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
